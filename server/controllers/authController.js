@@ -10,13 +10,16 @@ exports.syncUser = async (req, res) => {
                 firebaseUid: uid,
                 email,
                 name: name || "Guest User",
-                profilePicture: picture,
+                profilePicture: (picture && picture.includes('localhost:5000')) ? null : picture,
                 phone: phone_number
             });
             await user.save();
         } else {
             if (name) user.name = name;
-            if (picture) user.profilePicture = picture;
+            // Only update picture if it's not a localhost fallback from a previous local session
+            if (picture && !picture.includes('localhost:5000')) {
+                user.profilePicture = picture;
+            }
             if (email) user.email = email;
             if (phone_number) user.phone = phone_number;
             await user.save();

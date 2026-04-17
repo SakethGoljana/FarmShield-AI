@@ -44,25 +44,32 @@ local_model = None
 local_classes = None
 local_infer_fn = None  # For SavedModel inference
 
+# Helper to get paths relative to this script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+def get_path(rel_path):
+    return os.path.join(BASE_DIR, rel_path)
+
 # Load the fine-tuned .keras model
-keras_path = 'models/plant_disease_model.keras'
+keras_path = get_path('models/plant_disease_model.keras')
 if os.path.exists(keras_path):
     try:
-        print(f"Loading AI model: {keras_path}", flush=True)
+        print(f"Loading AI model from: {keras_path}", flush=True)
         local_model = tf.keras.models.load_model(keras_path, compile=False)
-        if os.path.exists('models/class_names.json'):
-            with open('models/class_names.json', 'r') as f:
+        names_path = get_path('models/class_names.json')
+        if os.path.exists(names_path):
+            with open(names_path, 'r') as f:
                 local_classes = json.load(f)
         else:
             local_classes = CLASS_NAMES
-        print(f"Loaded fine-tuned model with {len(local_classes)} classes!", flush=True)
+        print(f"Successfully loaded fine-tuned model with {len(local_classes)} classes!", flush=True)
     except Exception as e:
         print(f"tf.keras load failed, trying tf_keras: {e}", flush=True)
         try:
             import tf_keras
             local_model = tf_keras.models.load_model(keras_path, compile=False)
-            if os.path.exists('models/class_names.json'):
-                with open('models/class_names.json', 'r') as f:
+            names_path = get_path('models/class_names.json')
+            if os.path.exists(names_path):
+                with open(names_path, 'r') as f:
                     local_classes = json.load(f)
             else:
                 local_classes = CLASS_NAMES

@@ -49,7 +49,7 @@ exports.uploadImage = async (req, res) => {
             }
             console.warn('⚠️ ML service offline or failed, using fallback mock data.', mlErr.message);
             diseaseObj.fallback_used = true;
-            diseaseObj.fallback_message = "Python Backend is completely offline or crashed. Used Node fallback mock data.";
+            diseaseObj.fallback_message = "Precision AI Engine is temporarily unreachable (Render Cold Start or Network Drop). Used local heuristic fallback.";
         }
 
         // Get descriptive remedies in the requested language

@@ -92,8 +92,13 @@ export default function Profile() {
         });
         
         if (!res.ok) throw new Error('Failed to save avatar to cloud');
-        // Use our custom backend endpoint to serve the image, avoiding Firebase 400 length limits
-        finalPhotoURL = `${import.meta.env.VITE_API_BASE_URL}/api/auth/avatar/${currentUser.uid}?t=${Date.now()}`;
+        
+        const baseUrl = import.meta.env.VITE_API_BASE_URL;
+        // Safety: if baseUrl is missing or localhost, and we're on a secure site, we might need a better fallback
+        // but for now, we just ensure we use the environment variable.
+        if (baseUrl) {
+          finalPhotoURL = `${baseUrl}/api/auth/avatar/${currentUser.uid}?t=${Date.now()}`;
+        }
       }
 
       await updateUserProfile({ displayName, photoURL: finalPhotoURL });
