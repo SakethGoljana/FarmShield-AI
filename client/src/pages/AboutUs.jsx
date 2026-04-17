@@ -86,7 +86,7 @@ export default function AboutUs() {
       </div>
 
       {/* Unique Creative Team Grid: Pinterest Masonry Layout */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', columns: '3 300px', columnGap: 32, paddingBottom: 50, marginBottom: 60 }}>
+      <div className="about-team-grid" style={{ maxWidth: 1200, margin: '0 auto', columns: '3 300px', columnGap: 32, paddingBottom: 50, marginBottom: 60 }}>
         {TEAM.map((member, i) => (
           <div key={i} className="cyber-card km-fade-in" style={{
             display: 'flex', flexDirection: 'column', textAlign: 'left',

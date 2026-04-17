@@ -138,12 +138,12 @@ function SoilAnalysis() {
           <div className="km-fade-in" style={{ display: 'grid', gap: 24 }}>
 
             {/* Row 1: Health Score + pH */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+            <div className="km-responsive-grid-280">
               
               {/* Health Score Card */}
               <div className="km-card" style={{ padding: 32, textAlign: 'center' }}>
                 <p className="km-label">{t('soil.overallHealth')}</p>
-                <div style={{
+                <div className="health-score-circle" style={{
                   width: 120, height: 120, borderRadius: '50%', margin: '16px auto',
                   border: `6px solid ${scoreColor(report.healthScore)}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -178,7 +178,7 @@ function SoilAnalysis() {
             {/* Row 2: Nutrient Gauges */}
             <div className="km-card" style={{ padding: 32 }}>
               <p className="km-label" style={{ marginBottom: 20 }}>{t('soil.nutrientProfile')}</p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20 }}>
+              <div className="km-responsive-grid-200" style={{ gap: 20 }}>
                 {['N', 'P', 'K'].map(key => {
                   const nutrient = report.nutrients[key];
                   const val = formData[key];

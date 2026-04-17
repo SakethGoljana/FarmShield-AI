@@ -37,7 +37,7 @@ function Navbar() {
       height: scrolled ? 64 : 80,
       display: 'flex', alignItems: 'center'
     }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', width: '100%' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(10px, 4vw, 24px)', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           
           {/* Logo */}
@@ -50,11 +50,17 @@ function Navbar() {
               transform: scrolled ? 'scale(0.9)' : 'scale(1)',
               transition: 'transform 0.3s'
             }}>🌿</div>
-            <span style={{
+            <span className="mobile-hide" style={{
               fontSize: '1.4rem', fontWeight: 900, letterSpacing: '-0.03em',
               fontFamily: "'Space Grotesk', sans-serif", color: 'var(--text)',
             }}>
               FarmShield<span style={{ color: 'var(--accent)' }}> AI</span>
+            </span>
+            <span className="md:hidden" style={{
+              fontSize: '1.1rem', fontWeight: 900, letterSpacing: '-0.03em',
+              fontFamily: "'Space Grotesk', sans-serif", color: 'var(--text)',
+            }}>
+              FS<span style={{ color: 'var(--accent)' }}>AI</span>
             </span>
           </Link>
 
@@ -80,7 +86,7 @@ function Navbar() {
           </div>
 
           {/* Right Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(6px, 1.5vw, 10px)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(4px, 1.5vw, 10px)' }}>
             {/* Language Toggle */}
             <div className="km-lang-wrapper">
               <select

@@ -69,6 +69,9 @@ export const translations = {
       recommendedRemedies: 'Recommended Remedies',
       healthyMsg: 'plant appears healthy! Keep following your current care routine.',
       confidenceScore: 'Confidence Score',
+      confidence: 'Confidence Score',
+      uploadImg: '📸 Click to upload leaf image',
+      button: 'Diagnose Plant 🌿',
       systemWarmup: '🤖 System warming up! Please wait 20 seconds and try again.',
     },
 
@@ -230,6 +233,9 @@ export const translations = {
       recommendedRemedies: 'सुझाए गए उपचार',
       healthyMsg: 'का पौधा स्वस्थ दिखता है! अपनी वर्तमान देखभाल दिनचर्या जारी रखें।',
       confidenceScore: 'विश्वसनीयता स्कोर',
+      confidence: 'विश्वसनीयता स्कोर',
+      uploadImg: '📸 फोटो अपलोड करने के लिए क्लिक करें',
+      button: 'पौधे का निदान करें 🌿',
       systemWarmup: '🤖 सिस्टम तैयार हो रहा है! कृपया 20 सेकंड प्रतीक्षा करें और पुनः प्रयास करें।',
     },
 
@@ -391,6 +397,9 @@ export const translations = {
       recommendedRemedies: 'సిఫార్సు చేయబడిన నివారణలు',
       healthyMsg: 'మొక్క ఆరోగ్యంగా ఉన్నట్లు కనిపిస్తోంది! మీ ప్రస్తుత సంరక్షణను కొనసాగించండి.',
       confidenceScore: 'ఖచ్చితత్వ స్కోరు',
+      confidence: 'ఖచ్చితత్వ స్కోరు',
+      uploadImg: '📸 చిత్రాన్ని అప్‌లోడ్ చేయడానికి క్లిక్ చేయండి',
+      button: 'మొక్కను నిర్ధారించండి 🌿',
       systemWarmup: '🤖 సిస్టమ్ సిద్ధమవుతోంది! దయచేసి 20 సెకన్లు వేచి ఉండి మళ్లీ ప్రయత్నించండి.',
     },
 

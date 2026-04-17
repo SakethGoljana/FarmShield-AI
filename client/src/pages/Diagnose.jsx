@@ -124,7 +124,7 @@ function Diagnose() {
         {/* Step 1: Plant Selector */}
         <div className="km-card km-fade-in" style={{ padding: 32, marginBottom: 24 }}>
           <label className="km-label">{t('diagnose.step1')}</label>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10, marginTop: 12 }}>
+          <div className="km-responsive-grid-130" style={{ marginTop: 12 }}>
             {SUPPORTED_PLANTS.map(plant => (
               <button
                 key={plant}
@@ -234,7 +234,7 @@ function Diagnose() {
               <div style={{ width: '100%', maxWidth: 500, position: 'relative' }}>
                 <label className="km-scan" style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  width: '100%', height: 320, border: '2px dashed var(--border)',
+                  width: '100%', border: '2px dashed var(--border)',
                   borderRadius: 24, cursor: 'pointer', background: 'var(--surface)',
                   overflow: 'hidden', transition: 'all 0.3s ease', position: 'relative'
                 }}>
@@ -291,7 +291,7 @@ function Diagnose() {
         {result && (
           <div className="km-fade-in" style={{ marginTop: 40, animationDelay: '0.2s' }}>
             <div className="km-card" style={{ padding: 32 }}>
-              <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <div style={{
                   width: 64, height: 64, borderRadius: 20,
                   background: result.isHealthy ? 'var(--accent-glow)' : 'rgba(239, 68, 68, 0.1)',
