@@ -1,0 +1,9 @@
+{
+    "python.analysis.extraPaths": [
+        "./ml-service/venv/Lib/site-packages"
+    ],
+    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingImports": "none"
+    }
+}

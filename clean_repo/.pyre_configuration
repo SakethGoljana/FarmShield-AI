@@ -1,0 +1,12 @@
+{
+  "source_directories": [
+    "."
+  ],
+  "search_path": [
+    "ml-service/venv/Lib/site-packages"
+  ],
+  "exclude": [
+    "client",
+    "server"
+  ]
+}

@@ -1,0 +1,10 @@
+Flask==3.0.0
+tensorflow
+scikit-learn
+pandas
+numpy
+Pillow
+huggingface_hub
+kaggle
+python-dotenv
+tf-keras
