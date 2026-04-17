@@ -51,9 +51,11 @@ def get_path(rel_path):
 
 # Load the fine-tuned .keras model
 keras_path = get_path('models/plant_disease_model.keras')
+print(f"[BOOT] Looking for keras model at: {keras_path}", flush=True)
+print(f"[BOOT] File exists: {os.path.exists(keras_path)}", flush=True)
 if os.path.exists(keras_path):
     try:
-        print(f"Loading AI model from: {keras_path}", flush=True)
+        print(f"[BOOT] Loading AI model from: {keras_path} ({os.path.getsize(keras_path)} bytes)", flush=True)
         local_model = tf.keras.models.load_model(keras_path, compile=False)
         names_path = get_path('models/class_names.json')
         if os.path.exists(names_path):
@@ -61,7 +63,7 @@ if os.path.exists(keras_path):
                 local_classes = json.load(f)
         else:
             local_classes = CLASS_NAMES
-        print(f"Successfully loaded fine-tuned model with {len(local_classes)} classes!", flush=True)
+        print(f"[BOOT] ✅ Successfully loaded fine-tuned model with {len(local_classes)} classes!", flush=True)
     except Exception as e:
         print(f"tf.keras load failed, trying tf_keras: {e}", flush=True)
         try:
@@ -75,8 +77,16 @@ if os.path.exists(keras_path):
                 local_classes = CLASS_NAMES
             print(f"Loaded model via tf_keras with {len(local_classes)} classes!", flush=True)
         except Exception as e2:
-            print(f"Could not load model: {e2}", flush=True)
+            print(f"[BOOT] ❌ Could not load model via tf_keras either: {e2}", flush=True)
             local_model = None
+else:
+    print(f"[BOOT] ❌ Keras model file NOT FOUND at: {keras_path}", flush=True)
+    # List what IS in the models directory for debugging
+    models_dir = get_path('models')
+    if os.path.exists(models_dir):
+        print(f"[BOOT] Contents of {models_dir}: {os.listdir(models_dir)}", flush=True)
+    else:
+        print(f"[BOOT] Models directory does not exist: {models_dir}", flush=True)
 
 # If no .h5, try the kagglehub SavedModel (rishitdagli plant-disease)
 if local_model is None:
@@ -110,16 +120,48 @@ if local_model is None:
 
 
 try:
-    crop_model = joblib.load('./models/crop_model.pkl')
+    crop_pkl_path = get_path('models/crop_model.pkl')
+    print(f"[BOOT] Loading crop model from: {crop_pkl_path}", flush=True)
+    crop_model = joblib.load(crop_pkl_path)
+    print(f"[BOOT] ✅ Crop model loaded with {len(crop_model.classes_)} classes", flush=True)
 except Exception as e:
-    print(f"Crop model not loaded properly: {e}")
+    print(f"[BOOT] ❌ Crop model not loaded: {e}", flush=True)
     crop_model = None
 
 
 
 @app.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({"status": "OK", "message": "ML Service is running"})
+    return jsonify({
+        "status": "OK",
+        "message": "ML Service is running",
+        "disease_model_loaded": local_model is not None,
+        "crop_model_loaded": crop_model is not None,
+        "base_dir": BASE_DIR
+    })
+
+@app.route('/debug', methods=['GET'])
+def debug_info():
+    models_dir = get_path('models')
+    files = os.listdir(models_dir) if os.path.exists(models_dir) else []
+    file_details = []
+    for f in files:
+        fp = os.path.join(models_dir, f)
+        if os.path.isfile(fp):
+            file_details.append({"name": f, "size_bytes": os.path.getsize(fp)})
+        else:
+            file_details.append({"name": f, "type": "directory"})
+    return jsonify({
+        "base_dir": BASE_DIR,
+        "models_dir": models_dir,
+        "models_dir_exists": os.path.exists(models_dir),
+        "files": file_details,
+        "disease_model_loaded": local_model is not None,
+        "disease_model_type": str(type(local_model)) if local_model else None,
+        "crop_model_loaded": crop_model is not None,
+        "local_infer_fn_loaded": local_infer_fn is not None,
+        "tensorflow_version": tf.__version__,
+    })
 
 @app.route('/predict-disease', methods=['POST'])
 def predict_disease():
