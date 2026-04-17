@@ -51,11 +51,13 @@ def get_path(rel_path):
 
 # Load the fine-tuned .keras model
 keras_path = get_path('models/plant_disease_model.keras')
+model_load_error = None
 print(f"[BOOT] Looking for keras model at: {keras_path}", flush=True)
 print(f"[BOOT] File exists: {os.path.exists(keras_path)}", flush=True)
 if os.path.exists(keras_path):
+    # Strategy 1: Standard tf.keras load
     try:
-        print(f"[BOOT] Loading AI model from: {keras_path} ({os.path.getsize(keras_path)} bytes)", flush=True)
+        print(f"[BOOT] Strategy 1: tf.keras.models.load_model (compile=False)...", flush=True)
         local_model = tf.keras.models.load_model(keras_path, compile=False)
         names_path = get_path('models/class_names.json')
         if os.path.exists(names_path):
@@ -63,30 +65,73 @@ if os.path.exists(keras_path):
                 local_classes = json.load(f)
         else:
             local_classes = CLASS_NAMES
-        print(f"[BOOT] ✅ Successfully loaded fine-tuned model with {len(local_classes)} classes!", flush=True)
-    except Exception as e:
-        print(f"tf.keras load failed, trying tf_keras: {e}", flush=True)
+        print(f"[BOOT] ✅ Strategy 1 SUCCESS! Loaded with {len(local_classes)} classes!", flush=True)
+    except Exception as e1:
+        model_load_error = f"Strategy 1 (tf.keras): {str(e1)}"
+        print(f"[BOOT] ❌ Strategy 1 failed: {e1}", flush=True)
+
+        # Strategy 2: Try with safe_mode=False
         try:
-            import tf_keras
-            local_model = tf_keras.models.load_model(keras_path, compile=False)
+            print(f"[BOOT] Strategy 2: tf.keras with safe_mode=False...", flush=True)
+            local_model = tf.keras.models.load_model(keras_path, compile=False, safe_mode=False)
             names_path = get_path('models/class_names.json')
             if os.path.exists(names_path):
                 with open(names_path, 'r') as f:
                     local_classes = json.load(f)
             else:
                 local_classes = CLASS_NAMES
-            print(f"Loaded model via tf_keras with {len(local_classes)} classes!", flush=True)
+            print(f"[BOOT] ✅ Strategy 2 SUCCESS!", flush=True)
+            model_load_error = None
         except Exception as e2:
-            print(f"[BOOT] ❌ Could not load model via tf_keras either: {e2}", flush=True)
-            local_model = None
+            model_load_error += f" | Strategy 2 (safe_mode=False): {str(e2)}"
+            print(f"[BOOT] ❌ Strategy 2 failed: {e2}", flush=True)
+
+            # Strategy 3: Try tf_keras package
+            try:
+                print(f"[BOOT] Strategy 3: tf_keras.models.load_model...", flush=True)
+                import tf_keras
+                local_model = tf_keras.models.load_model(keras_path, compile=False)
+                names_path = get_path('models/class_names.json')
+                if os.path.exists(names_path):
+                    with open(names_path, 'r') as f:
+                        local_classes = json.load(f)
+                else:
+                    local_classes = CLASS_NAMES
+                print(f"[BOOT] ✅ Strategy 3 SUCCESS!", flush=True)
+                model_load_error = None
+            except Exception as e3:
+                model_load_error += f" | Strategy 3 (tf_keras): {str(e3)}"
+                print(f"[BOOT] ❌ Strategy 3 failed: {e3}", flush=True)
+
+                # Strategy 4: Try loading as HDF5 format (rename trick)
+                try:
+                    print(f"[BOOT] Strategy 4: Loading as H5 format...", flush=True)
+                    import shutil
+                    h5_path = keras_path.replace('.keras', '.h5')
+                    if not os.path.exists(h5_path):
+                        shutil.copy2(keras_path, h5_path)
+                    local_model = tf.keras.models.load_model(h5_path, compile=False)
+                    names_path = get_path('models/class_names.json')
+                    if os.path.exists(names_path):
+                        with open(names_path, 'r') as f:
+                            local_classes = json.load(f)
+                    else:
+                        local_classes = CLASS_NAMES
+                    print(f"[BOOT] ✅ Strategy 4 SUCCESS!", flush=True)
+                    model_load_error = None
+                except Exception as e4:
+                    model_load_error += f" | Strategy 4 (h5): {str(e4)}"
+                    print(f"[BOOT] ❌ ALL strategies failed. Model will NOT be available.", flush=True)
+                    local_model = None
 else:
+    model_load_error = f"File not found at: {keras_path}"
     print(f"[BOOT] ❌ Keras model file NOT FOUND at: {keras_path}", flush=True)
-    # List what IS in the models directory for debugging
     models_dir = get_path('models')
     if os.path.exists(models_dir):
         print(f"[BOOT] Contents of {models_dir}: {os.listdir(models_dir)}", flush=True)
     else:
         print(f"[BOOT] Models directory does not exist: {models_dir}", flush=True)
+
 
 # If no .h5, try the kagglehub SavedModel (rishitdagli plant-disease)
 if local_model is None:
@@ -158,6 +203,7 @@ def debug_info():
         "files": file_details,
         "disease_model_loaded": local_model is not None,
         "disease_model_type": str(type(local_model)) if local_model else None,
+        "model_load_error": model_load_error,
         "crop_model_loaded": crop_model is not None,
         "local_infer_fn_loaded": local_infer_fn is not None,
         "tensorflow_version": tf.__version__,
