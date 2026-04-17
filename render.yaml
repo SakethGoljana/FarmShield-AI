@@ -19,10 +19,12 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     envVars:
-      MONGODB_URI: ${MONGODB_URI}
-      EMAIL_USER: ${EMAIL_USER}
-      EMAIL_PASS: ${EMAIL_PASS}
-      # add any other secrets here
+      - key: MONGODB_URI
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
 
   # ---------- ML‑service (Python) ----------
   - type: web
@@ -34,5 +36,5 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: python app.py
     envVars:
-      # Example secret – replace with your own token if needed
-      HF_API_TOKEN: ${HF_API_TOKEN}
+      - key: HF_API_TOKEN
+        sync: false
